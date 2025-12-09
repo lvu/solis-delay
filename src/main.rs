@@ -2,16 +2,16 @@ mod config;
 mod solis_client;
 mod state;
 
-use std::time::Duration;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
+use std::time::Duration;
 
 use chrono::{TimeDelta, Utc};
 use config::AppConfig;
 use log::{info, warn};
+use signal_hook::consts::TERM_SIGNALS;
 use solis_client::{InverterCommand, InverterState, SolisApi};
 use state::AppState;
-use signal_hook::consts::TERM_SIGNALS;
 
 const EXECUTION_INTERVAL: TimeDelta = TimeDelta::seconds(30);
 
@@ -82,7 +82,7 @@ fn main() {
         match api.get_inverters() {
             Ok(inverters) => {
                 for inverter in inverters {
-                    println!("inverter: {:?}", inverter);
+                    println!("ID: {}, SN: {}", inverter.id, inverter.sn);
                 }
             }
             Err(e) => {

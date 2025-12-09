@@ -29,8 +29,11 @@ impl AppConfig {
     }
 
     pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
-        let _ = dotenvy::dotenv();  // ignore errors
+        let _ = dotenvy::dotenv(); // ignore errors
         let config = envy::prefixed("SOLIS_").from_env::<Self>()?;
-        Ok(AppConfig {api_url: config.api_url.trim_end_matches('/').to_string(), ..config})
+        Ok(AppConfig {
+            api_url: config.api_url.trim_end_matches('/').to_string(),
+            ..config
+        })
     }
 }

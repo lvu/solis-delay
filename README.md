@@ -68,8 +68,8 @@ docker run -d \
   --name solis-delay \
   --restart unless-stopped \
   -e SOLIS_API_URL=https://api.soliscloud.com \
-  -e SOLIS_KEY_ID=your_key_id \
-  -e SOLIS_KEY_SECRET=your_key_secret \
+  -e SOLIS_API_KEY_ID=your_key_id \
+  -e SOLIS_API_KEY_SECRET=your_key_secret \
   -e SOLIS_INVERTER_SN=1234567890 \
   -e SOLIS_GRID_CHARGING_DELAY=600 \
   -e SOLIS_MIN_BATTERY_PERCENT=90 \
@@ -114,8 +114,8 @@ Create a `.env` file in the project root with the following variables:
 ### Required
 
 - `SOLIS_API_URL` - Your Solis API endpoint URL (e.g., `https://api.soliscloud.com`)
-- `SOLIS_KEY_ID` - Your Solis API key ID
-- `SOLIS_KEY_SECRET` - Your Solis API key secret
+- `SOLIS_API_KEY_ID` - Your Solis API key ID
+- `SOLIS_API_KEY_SECRET` - Your Solis API key secret
 
 ### Optional
 
@@ -128,8 +128,8 @@ Create a `.env` file in the project root with the following variables:
 
 ```env
 SOLIS_API_URL=https://api.soliscloud.com
-SOLIS_KEY_ID=your_key_id
-SOLIS_KEY_SECRET=your_key_secret
+SOLIS_API_KEY_ID=your_key_id
+SOLIS_API_KEY_SECRET=your_key_secret
 SOLIS_INVERTER_SN=1234567890
 SOLIS_GRID_CHARGING_DELAY=600
 SOLIS_MIN_BATTERY_PERCENT=90
