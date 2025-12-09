@@ -3,12 +3,17 @@ mod solis_client;
 mod state;
 
 use std::time::Duration;
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
 
-use chrono::Utc;
+use chrono::{TimeDelta, Utc};
 use config::AppConfig;
 use log::{info, warn};
 use solis_client::{InverterCommand, InverterState, SolisApi};
 use state::AppState;
+use signal_hook::consts::TERM_SIGNALS;
+
+const EXECUTION_INTERVAL: TimeDelta = TimeDelta::seconds(30);
 
 fn worker_step(
     api: &SolisApi,
@@ -46,12 +51,20 @@ fn worker_step(
 }
 
 fn worker(api: &SolisApi, config: &AppConfig) {
+    let term = Arc::new(AtomicBool::new(false));
+    for &signal in TERM_SIGNALS {
+        let _ = signal_hook::flag::register(signal, Arc::clone(&term));
+    }
     let mut state = AppState::new(config, Utc::now());
-    loop {
-        if let Err(e) = worker_step(api, config, &mut state) {
-            warn!("error: {:#?}", e);
+    let mut last_exec = Utc::now() - EXECUTION_INTERVAL;
+    while !term.load(std::sync::atomic::Ordering::Relaxed) {
+        if Utc::now() - last_exec > EXECUTION_INTERVAL {
+            if let Err(e) = worker_step(api, config, &mut state) {
+                warn!("error: {:#?}", e);
+            }
+            last_exec = Utc::now();
         }
-        std::thread::sleep(Duration::from_secs(30));
+        std::thread::sleep(Duration::from_millis(100));
     }
 }
 

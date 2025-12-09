@@ -107,7 +107,14 @@ impl SolisApi {
     ) -> Result<GetParameterValueResponse, Box<dyn std::error::Error>> {
         let request = GetParameterValueRequest { inverter_sn, cid };
         let resp: GetParameterValueResponse = self.request("/v2/api/atRead", &request)?;
-        Ok(resp)
+        if resp.need_loop {
+            Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Loop responses not supported",
+            )))
+        } else {
+            Ok(resp)
+        }
     }
 
     fn set_parameter_value(

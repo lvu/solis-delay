@@ -1,28 +1,19 @@
-# Build stage
-FROM rust:1.91-slim as builder
-
+FROM lukemathwalker/cargo-chef:latest-rust-1 AS chef
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+FROM chef AS planner
+COPY . .
+RUN cargo chef prepare --recipe-path recipe.json
 
-# Copy manifest files
-COPY Cargo.toml Cargo.lock ./
+FROM chef AS builder
+COPY --from=planner /app/recipe.json recipe.json
+RUN cargo chef cook --release --recipe-path recipe.json
+COPY . .
+RUN cargo build --release --bin solis-delay
 
-# Copy source code
-COPY src ./src
-
-# Build the application
-RUN cargo build --release
-
-# Runtime stage
 FROM gcr.io/distroless/cc-debian12:nonroot
 
-# Copy CA certificates from builder stage for HTTPS requests
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-
-# Copy the binary from builder stage
 COPY --from=builder /app/target/release/solis-delay /usr/local/bin/solis-delay
 
 ENTRYPOINT ["/usr/local/bin/solis-delay"]
