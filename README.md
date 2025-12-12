@@ -71,7 +71,7 @@ docker run -d \
   -e SOLIS_API_KEY_ID=your_key_id \
   -e SOLIS_API_KEY_SECRET=your_key_secret \
   -e SOLIS_INVERTER_SN=1234567890 \
-  -e SOLIS_GRID_CHARGING_DELAY=600 \
+  -e SOLIS_GRID_CHARGING_DELAY=10m \
   -e SOLIS_MIN_BATTERY_PERCENT=90 \
   -e SOLIS_MAX_BATTERY_PERCENT=95 \
   -e RUST_LOG=info \
@@ -120,7 +120,7 @@ Create a `.env` file in the project root with the following variables:
 ### Optional
 
 - `SOLIS_INVERTER_SN` - Your inverter serial number. If not set, the application will list available inverters and exit.
-- `SOLIS_GRID_CHARGING_DELAY` - Delay in seconds before allowing grid charging after grid restoration (default: `600` = 10 minutes)
+- `SOLIS_GRID_CHARGING_DELAY` - Delay before allowing grid charging after grid restoration (default: `10m` = 10 minutes); expressed as `5m 30s`, `1h10m` and so on.
 - `SOLIS_MIN_BATTERY_PERCENT` - Minimum battery percentage to start charging (default: `90`)
 - `SOLIS_MAX_BATTERY_PERCENT` - Maximum battery percentage to stop charging (default: `95`)
 

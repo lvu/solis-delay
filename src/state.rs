@@ -32,7 +32,7 @@ impl AppState {
         };
         let new_allow_grid_charging =
             new_grid_active  // prevent charging when grid is back
-            && now - new_grid_switch_on_time > config.grid_charging_delay  // prevent charging too soon
+            && now > new_grid_switch_on_time + config.grid_charging_delay  // prevent charging too soon
             && detail.battery_percent < config.max_battery_percent  // prevent charging when battery is full
             && (self.allow_grid_charging || detail.battery_percent < config.min_battery_percent) // hysteresis
         ;
@@ -53,9 +53,10 @@ mod tests {
     use crate::solis_client::InverterDetailInfo;
     use crate::solis_client::InverterState;
     use chrono::{DateTime, TimeZone, Utc};
+    use std::time::Duration;
 
-    fn charge_delay() -> TimeDelta {
-        TimeDelta::seconds(300)
+    fn charge_delay() -> Duration {
+        Duration::from_secs(300)
     }
 
     fn now() -> DateTime<Utc> {

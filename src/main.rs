@@ -6,14 +6,14 @@ use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 use std::time::Duration;
 
-use chrono::{TimeDelta, Utc};
+use chrono::Utc;
 use config::AppConfig;
 use log::{info, warn};
 use signal_hook::consts::TERM_SIGNALS;
 use solis_client::{InverterCommand, InverterState, SolisApi};
 use state::AppState;
 
-const EXECUTION_INTERVAL: TimeDelta = TimeDelta::seconds(30);
+const EXECUTION_INTERVAL: Duration = Duration::from_secs(30);
 
 fn worker_step(
     api: &SolisApi,
@@ -58,7 +58,7 @@ fn worker(api: &SolisApi, config: &AppConfig) {
     let mut state = AppState::new(config, Utc::now());
     let mut last_exec = Utc::now() - EXECUTION_INTERVAL;
     while !term.load(std::sync::atomic::Ordering::Relaxed) {
-        if Utc::now() - last_exec > EXECUTION_INTERVAL {
+        if Utc::now() > last_exec + EXECUTION_INTERVAL {
             if let Err(e) = worker_step(api, config, &mut state) {
                 warn!("error: {:#?}", e);
             }
