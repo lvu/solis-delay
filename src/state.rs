@@ -24,7 +24,7 @@ impl AppState {
         config: &AppConfig,
         now: DateTime<Utc>,
     ) -> Self {
-        let new_grid_active = detail.u_ac1 > 2.0; // Margin for noise
+        let new_grid_active = detail.u_ac1 > 50.0; // Margin for noise
         let new_grid_switch_on_time = if new_grid_active && !self.grid_active {
             now
         } else {
