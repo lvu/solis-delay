@@ -100,6 +100,15 @@ impl SolisApi {
         Ok(resp)
     }
 
+    pub fn get_inverter_detail_json(
+        &self,
+        inverter_sn: &str,
+    ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+        let request = InvertorDetailRequest { sn: inverter_sn };
+        let resp: serde_json::Value = self.request("/v1/api/inverterDetail", &request)?;
+        Ok(resp)
+    }
+
     fn get_parameter_value(
         &self,
         inverter_sn: &str,

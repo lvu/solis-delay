@@ -70,6 +70,7 @@ fn worker(api: &SolisApi, config: &AppConfig) {
 
 fn main() {
     env_logger::init();
+
     let config = AppConfig::new().unwrap();
     let api = SolisApi::new(
         config.api_url.clone(),
@@ -91,6 +92,13 @@ fn main() {
             }
         }
         std::process::exit(2);
+    }
+
+    if std::env::args().any(|arg| arg == "probe") {
+        let inverter_sn = config.inverter_sn.as_ref().unwrap();
+        let detail = api.get_inverter_detail_json(inverter_sn).unwrap();
+        println!("{}", serde_json::to_string_pretty(&detail).unwrap());
+        return;
     }
 
     worker(&api, &config);
